@@ -1,19 +1,18 @@
-// here we will add all the handlers (functions) for our routes, which we will then export so that they can be used in the routes and keep them more tidy
+const postsRouter = require("express").Router();
+const Post = require("../models/post");
 
-import PostMessage from "../models/postMessage.js";
-
-export const getPosts = async (req, res) => {
+postsRouter.get("/", async (req, res) => {
   try {
-    const postMessages = await PostMessage.find();
+    const postMessages = await Post.find({});
     res.status(200).json(postMessages);
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
-};
+});
 
-export const createPosts = async (req, res) => {
+postsRouter.post("/", async (req, res) => {
   const post = req.body;
-  const newPost = new PostMessage(post); // we will pass in the value that we are receiving from the frontend form
+  const newPost = new Post(post); // we will pass in the value that we are receiving from the frontend form
 
   try {
     await newPost.save();
@@ -21,4 +20,6 @@ export const createPosts = async (req, res) => {
   } catch (error) {
     res.status(409).json({ message: error.message });
   }
-};
+});
+
+module.exports = postsRouter;

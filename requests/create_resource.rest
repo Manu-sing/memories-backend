@@ -1,0 +1,7 @@
+post http://localhost:5000/api/posts
+Content-Type: application/json
+
+{
+    "title": "let's see if this works",
+    "creator": "manu"
+}
