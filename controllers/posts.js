@@ -1,4 +1,5 @@
 const postsRouter = require("express").Router();
+const { default: mongoose } = require("mongoose");
 const Post = require("../models/post");
 
 postsRouter.get("/", async (req, res) => {
@@ -19,6 +20,27 @@ postsRouter.post("/", async (req, res) => {
     res.status(201).json(newPost);
   } catch (error) {
     res.status(409).json({ message: error.message });
+  }
+});
+
+postsRouter.put("/:id", async (request, response) => {
+  const post = request.body;
+
+  // if (!mongoose.Types.ObjectId.isValid(id))
+  //   return response.status(404).send("No post with that id");
+
+  const savedPost = await Post.findByIdAndUpdate(request.params.id, post, {
+    new: true,
+  });
+  response.json(savedPost);
+});
+
+postsRouter.delete("/:id", async (request, response) => {
+  try {
+    await Post.findByIdAndRemove(request.params.id);
+    response.status(204).end();
+  } catch (error) {
+    res.status(400).json({ message: error.message });
   }
 });
 
