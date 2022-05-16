@@ -7,7 +7,7 @@ postsRouter.get("/", async (req, res) => {
     const postMessages = await Post.find({});
     res.status(200).json(postMessages);
   } catch (error) {
-    res.status(404).json({ message: error.message });
+    res.status(404).json({ message: error });
   }
 });
 

@@ -23,9 +23,7 @@ app.use(express.json());
 app.use("/api/posts", postsRouter);
 app.use(express.json({ limit: "30mb", extended: true }));
 app.use(express.urlencoded({ limit: "30mb", extended: true }));
-app.get("/", (req, res) => {
-  res.send("Hello to ricordi API.");
-});
+app.use(express.static("build"));
 app.use(middleware.unknownEndpoint);
 
 module.exports = app;
