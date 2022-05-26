@@ -1,5 +1,6 @@
 post http://localhost:5000/api/posts
 Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImVtYW51ZWxlQGdtYWlsLmNvbSIsImlkIjoiNjI4YzgwMTJiZDRiNjVkZWZhZGFmNWM4IiwiaWF0IjoxNjUzNDQzODk0LCJleHAiOjE2NTM0NDc0OTR9.Z3JjyNpFMIFdUm4c9STw5Va4SMLqCydr7xxQgQPYih0
 
 {
     "title": "let's see if this works",
