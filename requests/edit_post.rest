@@ -1,0 +1,7 @@
+put http://localhost:5000/api/posts/6292e7fe8d090f564c176a85
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImVtYW51ZWxlQGdtYWlsLmNvbSIsImlkIjoiNjI5MmU3MjMwNTMyMDQyNjNiZWZhOTYyIiwiaWF0IjoxNjUzNzk0ODU0LCJleHAiOjE2NTM3OTg0NTR9.JwTPbcaFVppTdA-HTtN92aX5HnqbYHHwZ2p3zqv9o-A
+
+{
+    "title": "I have changed the title"
+}
