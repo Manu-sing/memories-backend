@@ -3,15 +3,14 @@ const Post = require("../models/post");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const { auth } = require("../utils/middleware");
-const { request } = require("express");
 
-const getTokenFrom = (req) => {
-  const authorization = req.get("authorization");
-  if (authorization && authorization.toLowerCase().startsWith("bearer ")) {
-    return authorization.substring(7);
-  }
-  return null;
-};
+// const getTokenFrom = (req) => {
+//   const authorization = req.get("authorization");
+//   if (authorization && authorization.toLowerCase().startsWith("bearer ")) {
+//     return authorization.substring(7);
+//   }
+//   return null;
+// };
 
 postsRouter.get("/", async (req, res) => {
   Post.find({}).then((posts) => {
@@ -47,8 +46,8 @@ postsRouter.post("/", auth, async (req, res, next) => {
 
 postsRouter.put("/:id", auth, async (req, res, next) => {
   const post = req.body;
-  const authorization = req.get("authorization");
-  token = authorization.split(" ")[1];
+  const authorization = req.get("Authorization");
+  const token = authorization.split(" ")[1];
   const decoded = jwt.verify(token, process.env.SECRET);
   try {
     const postToEdit = await Post.findById(req.params.id);
@@ -65,8 +64,8 @@ postsRouter.put("/:id", auth, async (req, res, next) => {
 });
 
 postsRouter.delete("/:id", auth, async (req, res, next) => {
-  const authorization = req.get("authorization");
-  token = authorization.split(" ")[1];
+  const authorization = req.get("Authorization");
+  const token = authorization.split(" ")[1];
   const decoded = jwt.verify(token, process.env.SECRET);
   try {
     const post = await Post.findById(req.params.id);
