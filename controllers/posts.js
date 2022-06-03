@@ -4,14 +4,6 @@ const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const { auth } = require("../utils/middleware");
 
-// const getTokenFrom = (req) => {
-//   const authorization = req.get("authorization");
-//   if (authorization && authorization.toLowerCase().startsWith("bearer ")) {
-//     return authorization.substring(7);
-//   }
-//   return null;
-// };
-
 postsRouter.get("/", async (req, res) => {
   Post.find({}).then((posts) => {
     res.json(posts);
@@ -31,10 +23,21 @@ postsRouter.get("/:id", async (req, res, next) => {
 });
 
 postsRouter.post("/", auth, async (req, res, next) => {
+  // the req.userId has been defined in the auth middleware function for custom users
+  // the req.googleId has been defined in the auth middleware function for google users
+  const post = req.body;
   try {
-    const post = req.body;
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.userId);
     const newPost = new Post({ ...post, user: user._id });
+    if (
+      newPost.creator === "" ||
+      newPost.title === "" ||
+      newPost.message === ""
+    ) {
+      console.log("The fields creator, title and message must be provided.");
+      return;
+    }
+
     const savedPost = await newPost.save();
     user.posts = user.posts.concat(savedPost._id);
     await user.save();
@@ -46,12 +49,11 @@ postsRouter.post("/", auth, async (req, res, next) => {
 
 postsRouter.put("/:id", auth, async (req, res, next) => {
   const post = req.body;
-  const authorization = req.get("Authorization");
-  const token = authorization.split(" ")[1];
-  const decoded = jwt.verify(token, process.env.SECRET);
+  // the req.userId has been defined in the auth middleware function
+
   try {
     const postToEdit = await Post.findById(req.params.id);
-    if (postToEdit.user.toString() === decoded.id.toString()) {
+    if (postToEdit.user.toString() === req.userId.toString()) {
       Post.findByIdAndUpdate(req.params.id, post, { new: true }).then(
         (updatedPost) => {
           res.json(updatedPost);
@@ -64,12 +66,10 @@ postsRouter.put("/:id", auth, async (req, res, next) => {
 });
 
 postsRouter.delete("/:id", auth, async (req, res, next) => {
-  const authorization = req.get("Authorization");
-  const token = authorization.split(" ")[1];
-  const decoded = jwt.verify(token, process.env.SECRET);
+  // the req.userId has been defined in the auth middleware function
   try {
     const post = await Post.findById(req.params.id);
-    if (post.user.toString() === decoded.id.toString()) {
+    if (post.user.toString() === req.userId.toString()) {
       await User.findByIdAndUpdate(
         { _id: post.user },
         { $pull: { posts: post._id } }
@@ -80,27 +80,6 @@ postsRouter.delete("/:id", auth, async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-
-  // const token = getTokenFrom(req);
-  // const decodedToken = jwt.verify(token, process.env.SECRET);
-  // if (!decodedToken.id) {
-  //   return response.status(401).json({ error: "token missing or invalid" });
-  // }
-
-  // const post = await Post.findById(req.params.id);
-  // // const user = await User.findById(post.user);
-
-  // if (post.user.toString() === decodedToken.id.toString()) {
-  //   await User.findByIdAndUpdate(
-  //     { _id: post.user },
-  //     { $pull: { posts: post._id } }
-  //   );
-  //   await Post.findByIdAndRemove(req.params.id)
-  //     .then(() => {
-  //       res.status(204).end();
-  //     })
-  //     .catch((error) => next(error));
-  // }
 });
 
 module.exports = postsRouter;
